@@ -8,14 +8,10 @@ xTextSize<-14
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # read in cleaned data
-HostRange24.all<-read.csv("GlobiHostRangeData_2024_2025.csv", header=TRUE)
+HostRange24.all<-read.csv("GlobiHostRangeData_24_25.csv", header=TRUE)
 #view(HostRange24.all)
 
 #unique(HostRange24.all$Bacteria)
-
-#GTF may not be unique - remove
-HostRange24.all <- HostRange24.all |>
-  dplyr::filter(Name != "GreenTreeFrog")
 
 # heatmap EOPs
 HostRange24.EOPhosts<-HostRange24.all |>
@@ -55,8 +51,11 @@ HostRangeCountByPhage<-HostRange24.EOP.all %>%
   group_by(PhageID) %>%
   dplyr::filter(LFW!="Y" & Set == 1) %>%
   summarise(nNonTarget=n())
-#view(HostRangeCountByPhage)
-#length(which(HostRangeCountByPhage$nNonTarget==4))
+view(HostRangeCountByPhage)
+length(which(HostRangeCountByPhage$nNonTarget==1))
+length(which(HostRangeCountByPhage$nNonTarget==2))
+length(which(HostRangeCountByPhage$nNonTarget==3))
+length(which(HostRangeCountByPhage$nNonTarget==4))
 
 # plot raw logEOP by phage (another way of seeing these data)
 HostRange24.EOP.all %>%
@@ -141,24 +140,24 @@ lm.24478.24025<-lm(B24478~B24025, data=HostRange24.EOP.globi.filtered)
 summary(lm.24478.24025)
 # n.s.
 
-# replace NAs with -6 for plotting
+# replace NAs with -8 for plotting
 HostRange24.EOP.globi<-HostRange24.EOP.globi %>%
-  dplyr::mutate(B24025= replace_na(B24025,-6)) %>%
-  dplyr::mutate(B2880= replace_na(B2880,-6)) %>%
-  dplyr::mutate(B24478= replace_na(B24478,-6))
+  dplyr::mutate(B24025= replace_na(B24025,-8)) %>%
+  dplyr::mutate(B2880= replace_na(B2880,-8)) %>%
+  dplyr::mutate(B24478= replace_na(B24478,-8))
 
 #view(HostRange24.EOP.globi)
 
 # medians?
-median(HostRange24.EOP.globi$B2880[HostRange24.EOP.globi$B2880 > -5]) #-1.301
-median(HostRange24.EOP.globi$B24025[HostRange24.EOP.globi$B24025>-5]) #-0.301
+median(HostRange24.EOP.globi$B2880[HostRange24.EOP.globi$B2880 > -8]) #-1.3098
+median(HostRange24.EOP.globi$B24025[HostRange24.EOP.globi$B24025>-8]) #-0.32
 
 #plot globi v globi
 pHostRange24.EOP.globi<-HostRange24.EOP.globi %>%
   ggplot(aes(x=B24025, y=B2880))+
   geom_point(size=2)+
-  xlim(-6, 1)+
-  ylim(-6, 1)+
+  xlim(-8, 1)+
+  ylim(-8, 1)+
   #scale_color_manual(values=cols)+
   geom_hline(yintercept = 0, color="grey20")+
   geom_vline(xintercept = 0, color="grey20")+
@@ -177,8 +176,8 @@ pHostRange24.EOP.globi
 pHostRange24.EOP.globi.oryzae1<-HostRange24.EOP.globi %>%
   ggplot(aes(x=B24025, y=B24478))+
   geom_point(size=2)+
-  xlim(-6, 1)+
-  ylim(-6, 1)+
+  xlim(-8, 1)+
+  ylim(-8, 1)+
   #scale_color_manual(values=cols)+
   geom_hline(yintercept = 0, color="grey20")+
   geom_vline(xintercept = 0, color="grey20")+
@@ -195,8 +194,8 @@ pHostRange24.EOP.globi.oryzae1
 pHostRange24.EOP.globi.oryzae2<-HostRange24.EOP.globi %>%
   ggplot(aes(x=B2880, y=B24478))+
   geom_point(size=2)+
-  xlim(-6, 1)+
-  ylim(-6, 1)+
+  xlim(-8, 1)+
+  ylim(-8, 1)+
 #  scale_color_manual(values=cols)+
   geom_hline(yintercept = 0, color="grey20")+
   geom_vline(xintercept = 0, color="grey20")+
@@ -255,6 +254,12 @@ pIndivPlaques_bar_all<-HostRange24.phagesummary.all %>%
   labs(y="Fraction of Phage", x="", fill="Host \nStrain", title="Individual Plaques")
 pIndivPlaques_bar_all
 
+
+# Ratios of EOPs
+HostRange24.EOP.globi <- HostRange24.EOP.globi |>
+  dplyr::mutate(B2880vB24025 = B2880-B24025)
+
+view(HostRange24.EOP.globi)
 
 #~~~~~~~~~~~~~~~~~~~
 # composite plot
